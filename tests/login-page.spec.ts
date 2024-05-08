@@ -82,3 +82,11 @@ test("should display an error message with invalid username and invalid password
   await loginPage.login(invalidUsername2, invalidPassword);
   await loginPage.expectErrorMessage(errorMessageNotMatch);
 });
+
+test("should display an error message with valid username and invalid password", async ({
+  page,
+}) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.login(validUsername, invalidPassword);
+  await loginPage.expectErrorMessage(errorMessageNotMatch);
+});
