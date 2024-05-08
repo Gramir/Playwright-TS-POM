@@ -39,7 +39,7 @@ test("should display an error message with empty username", async ({
   page,
 }) => {
   const loginPage = new LoginPage(page);
-  await loginPage.login("", validPassword);
+  await loginPage.login(emptyUsername, validPassword);
   await loginPage.expectErrorMessage(errorMessageRequiredUsername);
 });
 
@@ -47,7 +47,7 @@ test("should display an error message with empty password", async ({
   page,
 }) => {
   const loginPage = new LoginPage(page);
-  await loginPage.login(validUsername, "");
+  await loginPage.login(validUsername, emptyPassword);
   await loginPage.expectErrorMessage(errorMessageRequiredPassword);
 });
 
@@ -55,7 +55,7 @@ test("should display an error message with empty username and password", async (
   page,
 }) => {
   const loginPage = new LoginPage(page);
-  await loginPage.login("", "");
+  await loginPage.login(emptyUsername, emptyPassword);
   await loginPage.expectErrorMessage(errorMessageRequiredUsername);
 });
 
@@ -63,7 +63,7 @@ test("should display an error message with empty username and invalid password",
   page,
 }) => {
   const loginPage = new LoginPage(page);
-  await loginPage.login("", invalidPassword);
+  await loginPage.login(emptyUsername, invalidPassword);
   await loginPage.expectErrorMessage(errorMessageRequiredUsername);
 });
 
@@ -71,7 +71,7 @@ test("should display an error message with invalid username and empty password",
   page,
 }) => {
   const loginPage = new LoginPage(page);
-  await loginPage.login(invalidUsername, "");
+  await loginPage.login(invalidUsername, emptyPassword);
   await loginPage.expectErrorMessage(errorMessageRequiredPassword);
 });
 
