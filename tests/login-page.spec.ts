@@ -2,11 +2,20 @@ import { test, expect } from "@playwright/test";
 import LoginPage from "../pages/login-page";
 
 const url = "https://www.saucedemo.com/";
+const loggedUrl = "https://www.saucedemo.com/inventory.html";
 const validUsername = "standard_user";
 const validPassword = "secret_sauce";
 const invalidUsername = "locked_out_user";
 const invalidUsername2 = "problem_users";
 const invalidPassword = "invalid_password";
+const emptyUsername = "";
+const emptyPassword = "";
+const errorMessageNotMatch =
+  "Epic sadface: Username and password do not match any user in this service";
+const errorMessageRequiredUsername = "Epic sadface: Username is required";
+const errorMessageRequiredPassword = "Epic sadface: Password is required";
+const errorMessageLockedOut =
+  "Epic sadface: Sorry, this user has been locked out.";
 
 test.beforeEach(async ({ page }) => {
   await page.goto(url);
@@ -15,17 +24,15 @@ test.beforeEach(async ({ page }) => {
 test("should login with valid credentials", async ({ page }) => {
   const loginPage = new LoginPage(page);
   await loginPage.login(validUsername, validPassword);
-  await expect(page.url()).toBe("https://www.saucedemo.com/inventory.html");
+  await expect(page.url()).toBe(loggedUrl);
 });
 
-test("should display an error message with invalid credentials", async ({
+test("should display an error message with locked credentials", async ({
   page,
 }) => {
   const loginPage = new LoginPage(page);
   await loginPage.login(invalidUsername, validPassword);
-  await loginPage.expectErrorMessage(
-    "Epic sadface: Sorry, this user has been locked out."
-  );
+  await loginPage.expectErrorMessage(errorMessageLockedOut);
 });
 
 test("should display an error message with empty username", async ({
@@ -33,7 +40,7 @@ test("should display an error message with empty username", async ({
 }) => {
   const loginPage = new LoginPage(page);
   await loginPage.login("", validPassword);
-  await loginPage.expectErrorMessage("Epic sadface: Username is required");
+  await loginPage.expectErrorMessage(errorMessageRequiredUsername);
 });
 
 test("should display an error message with empty password", async ({
@@ -41,7 +48,7 @@ test("should display an error message with empty password", async ({
 }) => {
   const loginPage = new LoginPage(page);
   await loginPage.login(validUsername, "");
-  await loginPage.expectErrorMessage("Epic sadface: Password is required");
+  await loginPage.expectErrorMessage(errorMessageRequiredPassword);
 });
 
 test("should display an error message with empty username and password", async ({
@@ -49,7 +56,7 @@ test("should display an error message with empty username and password", async (
 }) => {
   const loginPage = new LoginPage(page);
   await loginPage.login("", "");
-  await loginPage.expectErrorMessage("Epic sadface: Username is required");
+  await loginPage.expectErrorMessage(errorMessageRequiredUsername);
 });
 
 test("should display an error message with empty username and invalid password", async ({
@@ -57,7 +64,7 @@ test("should display an error message with empty username and invalid password",
 }) => {
   const loginPage = new LoginPage(page);
   await loginPage.login("", invalidPassword);
-  await loginPage.expectErrorMessage("Epic sadface: Username is required");
+  await loginPage.expectErrorMessage(errorMessageRequiredUsername);
 });
 
 test("should display an error message with invalid username and empty password", async ({
@@ -65,7 +72,7 @@ test("should display an error message with invalid username and empty password",
 }) => {
   const loginPage = new LoginPage(page);
   await loginPage.login(invalidUsername, "");
-  await loginPage.expectErrorMessage("Epic sadface: Password is required");
+  await loginPage.expectErrorMessage(errorMessageRequiredPassword);
 });
 
 test("should display an error message with invalid username and invalid password", async ({
@@ -73,7 +80,5 @@ test("should display an error message with invalid username and invalid password
 }) => {
   const loginPage = new LoginPage(page);
   await loginPage.login(invalidUsername2, invalidPassword);
-  await loginPage.expectErrorMessage(
-    "Epic sadface: Username and password do not match any user in this service"
-  );
+  await loginPage.expectErrorMessage(errorMessageNotMatch);
 });
