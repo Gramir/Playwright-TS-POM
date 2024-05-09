@@ -16,13 +16,14 @@ const errorMessageRequiredUsername = "Epic sadface: Username is required";
 const errorMessageRequiredPassword = "Epic sadface: Password is required";
 const errorMessageLockedOut =
   "Epic sadface: Sorry, this user has been locked out.";
+let loginPage: LoginPage;
 
 test.beforeEach(async ({ page }) => {
   await page.goto(url);
+  loginPage = new LoginPage(page);
 });
 
 test("should login with valid credentials", async ({ page }) => {
-  const loginPage = new LoginPage(page);
   await loginPage.login(validUsername, validPassword);
   await expect(page.url()).toBe(loggedUrl);
 });
@@ -30,7 +31,6 @@ test("should login with valid credentials", async ({ page }) => {
 test("should display an error message with locked credentials", async ({
   page,
 }) => {
-  const loginPage = new LoginPage(page);
   await loginPage.login(invalidUsername, validPassword);
   await loginPage.expectErrorMessage(errorMessageLockedOut);
 });
@@ -38,7 +38,6 @@ test("should display an error message with locked credentials", async ({
 test("should display an error message with empty username", async ({
   page,
 }) => {
-  const loginPage = new LoginPage(page);
   await loginPage.login(emptyUsername, validPassword);
   await loginPage.expectErrorMessage(errorMessageRequiredUsername);
 });
@@ -46,7 +45,6 @@ test("should display an error message with empty username", async ({
 test("should display an error message with empty password", async ({
   page,
 }) => {
-  const loginPage = new LoginPage(page);
   await loginPage.login(validUsername, emptyPassword);
   await loginPage.expectErrorMessage(errorMessageRequiredPassword);
 });
@@ -54,7 +52,6 @@ test("should display an error message with empty password", async ({
 test("should display an error message with empty username and password", async ({
   page,
 }) => {
-  const loginPage = new LoginPage(page);
   await loginPage.login(emptyUsername, emptyPassword);
   await loginPage.expectErrorMessage(errorMessageRequiredUsername);
 });
@@ -62,7 +59,6 @@ test("should display an error message with empty username and password", async (
 test("should display an error message with empty username and invalid password", async ({
   page,
 }) => {
-  const loginPage = new LoginPage(page);
   await loginPage.login(emptyUsername, invalidPassword);
   await loginPage.expectErrorMessage(errorMessageRequiredUsername);
 });
@@ -70,7 +66,6 @@ test("should display an error message with empty username and invalid password",
 test("should display an error message with invalid username and empty password", async ({
   page,
 }) => {
-  const loginPage = new LoginPage(page);
   await loginPage.login(invalidUsername, emptyPassword);
   await loginPage.expectErrorMessage(errorMessageRequiredPassword);
 });
@@ -78,7 +73,6 @@ test("should display an error message with invalid username and empty password",
 test("should display an error message with invalid username and invalid password", async ({
   page,
 }) => {
-  const loginPage = new LoginPage(page);
   await loginPage.login(invalidUsername2, invalidPassword);
   await loginPage.expectErrorMessage(errorMessageNotMatch);
 });
