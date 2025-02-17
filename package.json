@@ -1,10 +1,30 @@
 {
+  "name": "playwright-typescript-pom",
+  "version": "1.0.0",
+  "description": "Pruebas automatizadas con Playwright y TypeScript usando Page Object Model",
   "dependencies": {
     "playwright": "^1.44.0"
   },
-  "devDependencies": {
-    "@playwright/test": "^1.44.0",
-    "@types/node": "^20.12.10"
+  "scripts": {
+    "clean": "rimraf test-results && rimraf playwright-report && rimraf screenshots",
+    "test": "npm run clean && playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:chrome": "playwright test --project=Chrome",
+    "test:firefox": "playwright test --project=Firefox",
+    "show-report": "playwright show-report"
   },
-  "scripts": {}
+  "keywords": [
+    "playwright",
+    "typescript",
+    "testing",
+    "automation"
+  ],
+  "devDependencies": {
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^20.8.7",
+    "rimraf": "^5.0.10",
+    "typescript": "^5.7.3"
+  }
 }
