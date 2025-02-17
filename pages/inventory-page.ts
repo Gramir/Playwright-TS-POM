@@ -5,30 +5,35 @@ export default class InventoryPage {
     private inventoryList: Locator;
     private cartBadge: Locator;
     private sortSelect: Locator;
+    private inventoryItems: Locator;
+    private firstItemName: Locator;
 
     constructor(page: Page) {
         this.page = page;
         this.inventoryList = page.locator('.inventory_list');
         this.cartBadge = page.locator('.shopping_cart_badge');
         this.sortSelect = page.locator('[data-test="product_sort_container"]');
+        this.inventoryItems = page.locator('.inventory_item');
+        this.firstItemName = page.locator('.inventory_item_name').first();
     }
 
-    async addToCart(itemName: string) {
-        await this.page.waitForSelector(`[data-test="add-to-cart-${itemName}"]`, { state: 'visible' });
-        await this.page.click(`[data-test="add-to-cart-${itemName}"]`);
+    async addToCart(itemId: string) {
+        const buttonSelector = `[data-test="add-to-cart-${itemId}"]`;
+        await this.page.waitForSelector(buttonSelector, { state: 'visible', timeout: 5000 });
+        await this.page.click(buttonSelector);
     }
 
-    async removeFromCart(itemName: string) {
-        await this.page.waitForSelector(`[data-test="remove-${itemName}"]`, { state: 'visible' });
-        await this.page.click(`[data-test="remove-${itemName}"]`);
+    async removeFromCart(itemId: string) {
+        const buttonSelector = `[data-test="remove-${itemId}"]`;
+        await this.page.waitForSelector(buttonSelector, { state: 'visible', timeout: 5000 });
+        await this.page.click(buttonSelector);
     }
 
     async sortItems(option: 'az' | 'za' | 'lohi' | 'hilo') {
-        await this.page.waitForLoadState('networkidle');
-        await this.sortSelect.waitFor({ state: 'visible' });
+        await this.sortSelect.waitFor({ state: 'visible', timeout: 5000 });
         await this.sortSelect.selectOption(option);
         // Esperar a que la lista se actualice
-        await this.page.waitForTimeout(500);
+        await this.page.waitForTimeout(1000);
     }
 
     async getCartCount(): Promise<number> {
@@ -42,21 +47,27 @@ export default class InventoryPage {
     }
 
     async getInventoryItemsCount(): Promise<number> {
-        await this.inventoryList.waitFor({ state: 'visible' });
-        return await this.page.locator('.inventory_item').count();
+        await this.inventoryList.waitFor({ state: 'visible', timeout: 5000 });
+        return await this.inventoryItems.count();
     }
 
     async getFirstItemName(): Promise<string | null> {
-        await this.page.waitForSelector('.inventory_item_name', { state: 'visible' });
-        return await this.page.locator('.inventory_item_name').first().textContent();
+        await this.firstItemName.waitFor({ state: 'visible', timeout: 5000 });
+        return await this.firstItemName.textContent();
     }
 
     async validateItemAdded() {
         await this.cartBadge.waitFor({ state: 'visible', timeout: 5000 });
-        await expect(this.cartBadge).toHaveText('1');
+        const count = await this.getCartCount();
+        expect(count).toBe(1);
     }
 
     async validateItemRemoved() {
-        await expect(this.cartBadge).not.toBeVisible({ timeout: 5000 });
+        try {
+            await this.cartBadge.waitFor({ state: 'hidden', timeout: 5000 });
+        } catch {
+            const count = await this.getCartCount();
+            expect(count).toBe(0);
+        }
     }
 }

@@ -19,6 +19,8 @@ export class LoginPage {
     await this.usernameField.fill(username);
     await this.passwordField.fill(password);
     await this.loginButton.click();
+    // Esperar a que la navegación se complete
+    await this.page.waitForURL('**/inventory.html');
   }
 
   async expectErrorMessage(message: string) {
